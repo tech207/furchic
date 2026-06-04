@@ -25,12 +25,14 @@ $$;
 
 CREATE OR REPLACE FUNCTION is_admin()
 RETURNS BOOLEAN
-LANGUAGE sql SECURITY DEFINER STABLE
+LANGUAGE plpgsql SECURITY DEFINER STABLE
 SET search_path = public AS $$
-  SELECT COALESCE(
+BEGIN
+  RETURN COALESCE(
     (SELECT role = 'admin' FROM users WHERE id = auth.uid()),
     false
   );
+END;
 $$;
 
 -- ── Tables ────────────────────────────────────────────────────────────────────
