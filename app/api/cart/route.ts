@@ -15,6 +15,8 @@ type CartRow = {
     price: number | null
     stock: number
     is_active: boolean
+    is_preorder: boolean
+    preorder_note: string | null
     products: {
       id: string
       name: string
@@ -37,7 +39,7 @@ export const GET = withAuth(async (_req, _ctx, user) => {
       variant_id,
       quantity,
       product_variants (
-        id, name, sku, price, stock, is_active,
+        id, name, sku, price, stock, is_active, is_preorder, preorder_note,
         products (
           id, name, images, base_price, is_active
         )
@@ -74,15 +76,17 @@ export const GET = withAuth(async (_req, _ctx, user) => {
 
     let quantity = row.quantity
 
-    if (variant.stock === 0) {
-      warnings.push(`「${product.name}」已售完，已從購物車移除`)
-      continue
-    }
-    if (quantity > variant.stock) {
-      warnings.push(
-        `「${product.name}」庫存不足，數量已調整為 ${variant.stock}`,
-      )
-      quantity = variant.stock
+    if (!variant.is_preorder) {
+      if (variant.stock === 0) {
+        warnings.push(`「${product.name}」已售完，已從購物車移除`)
+        continue
+      }
+      if (quantity > variant.stock) {
+        warnings.push(
+          `「${product.name}」庫存不足，數量已調整為 ${variant.stock}`,
+        )
+        quantity = variant.stock
+      }
     }
 
     items.push({
@@ -95,6 +99,8 @@ export const GET = withAuth(async (_req, _ctx, user) => {
       quantity,
       image_url: product.images?.[0] ?? '',
       stock: variant.stock,
+      is_preorder: variant.is_preorder,
+      preorder_note: variant.preorder_note ?? undefined,
     })
   }
 
@@ -128,7 +134,7 @@ export const PUT = withAuth(async (req: NextRequest, _ctx, user) => {
 
   const { data: variantsRaw } = await admin
     .from('product_variants')
-    .select('id, stock, is_active')
+    .select('id, stock, is_active, is_preorder')
     .in('id', variantIds)
 
   const stockMap = new Map(
@@ -137,6 +143,7 @@ export const PUT = withAuth(async (req: NextRequest, _ctx, user) => {
         id: string
         stock: number
         is_active: boolean
+        is_preorder: boolean
       }> | null
     )?.map((v) => [v.id, v]) ?? [],
   )
@@ -148,10 +155,13 @@ export const PUT = withAuth(async (req: NextRequest, _ctx, user) => {
     })
     .map((item) => {
       const v = stockMap.get(item.variant_id)
+      const qty = v?.is_preorder
+        ? item.quantity
+        : Math.min(item.quantity, v?.stock ?? item.quantity)
       return {
         user_id: user.id,
         variant_id: item.variant_id,
-        quantity: Math.min(item.quantity, v?.stock ?? item.quantity),
+        quantity: qty,
         created_at: now,
         updated_at: now,
       }

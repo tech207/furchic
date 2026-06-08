@@ -50,7 +50,7 @@ export async function GET(_req: NextRequest, ctx: RouteHandlerContext) {
     .from('products')
     .select(
       `id, name, description, base_price, images, is_active, sort_order, created_at, updated_at,
-      product_variants ( id, name, sku, price, stock, low_stock_threshold, is_active, sort_order ),
+      product_variants ( id, name, sku, price, stock, low_stock_threshold, is_active, sort_order, is_preorder, preorder_note ),
       product_variant_options ( id, option_name, option_value, sort_order )`,
     )
     .eq('id', id)

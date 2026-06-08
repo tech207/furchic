@@ -13,6 +13,8 @@ export type CartItem = {
   quantity: number
   image_url: string
   stock: number
+  is_preorder?: boolean
+  preorder_note?: string
 }
 
 type CartSettings = {
@@ -49,6 +51,8 @@ export type AddVariantArg = {
   sku: string
   price: number | null
   stock: number
+  is_preorder?: boolean
+  preorder_note?: string
 }
 
 export type CartStore = {
@@ -135,7 +139,9 @@ export const useCartStore = create<CartStore>()(
         let newItems: CartItem[]
 
         if (existing) {
-          const newQty = Math.min(existing.quantity + qty, variant.stock)
+          const newQty = variant.is_preorder
+            ? existing.quantity + qty
+            : Math.min(existing.quantity + qty, variant.stock)
           newItems = items.map((i) =>
             i.variant_id === variant.id
               ? { ...i, quantity: newQty, stock: variant.stock }
@@ -151,9 +157,13 @@ export const useCartStore = create<CartStore>()(
               variant_name: variant.name,
               sku: variant.sku,
               unit_price: variant.price ?? product.base_price,
-              quantity: Math.min(qty, variant.stock),
+              quantity: variant.is_preorder
+                ? qty
+                : Math.min(qty, variant.stock),
               image_url: product.images[0] ?? '',
               stock: variant.stock,
+              is_preorder: variant.is_preorder,
+              preorder_note: variant.preorder_note,
             },
           ]
         }

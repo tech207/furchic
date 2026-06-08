@@ -53,6 +53,8 @@ type Variant = {
   low_stock_threshold: number
   is_active: boolean
   sort_order: number
+  is_preorder: boolean
+  preorder_note: string | null
 }
 
 type Product = {
@@ -74,6 +76,8 @@ const EMPTY_VARIANT_FORM = {
   low_stock_threshold: '5',
   is_active: true,
   sort_order: '0',
+  is_preorder: false,
+  preorder_note: '',
 }
 
 // ── Image manager ─────────────────────────────────────────────────────────────
@@ -223,6 +227,8 @@ function VariantDialog({
         low_stock_threshold: String(initial.low_stock_threshold),
         is_active: initial.is_active,
         sort_order: String(initial.sort_order),
+        is_preorder: initial.is_preorder,
+        preorder_note: initial.preorder_note ?? '',
       })
     } else {
       setForm(EMPTY_VARIANT_FORM)
@@ -261,6 +267,11 @@ function VariantDialog({
         low_stock_threshold: isNaN(thresh) ? 5 : thresh,
         is_active: form.is_active,
         sort_order: isNaN(sortOrd) ? 0 : sortOrd,
+        is_preorder: form.is_preorder,
+        preorder_note:
+          form.is_preorder && form.preorder_note.trim()
+            ? form.preorder_note.trim()
+            : null,
       }
       const url = initial
         ? `/api/admin/products/${productId}/variants/${initial.id}`
@@ -390,6 +401,36 @@ function VariantDialog({
               onCheckedChange={(v) => set('is_active', v)}
             />
           </div>
+
+          {/* is_preorder */}
+          <div className="flex items-center justify-between rounded-lg border px-4 py-3">
+            <div>
+              <p className="text-sm font-medium">開放預購</p>
+              <p className="text-xs text-muted-foreground">
+                開啟後即使庫存為 0 也可加入購物車
+              </p>
+            </div>
+            <Switch
+              checked={form.is_preorder}
+              onCheckedChange={(v) => set('is_preorder', v)}
+            />
+          </div>
+
+          {/* preorder_note */}
+          {form.is_preorder && (
+            <div className="space-y-1.5">
+              <Label>預購說明</Label>
+              <Input
+                placeholder="例：預計 2-3 週出貨，下單後不可取消"
+                value={form.preorder_note}
+                onChange={(e) => set('preorder_note', e.target.value)}
+                maxLength={200}
+              />
+              <p className="text-xs text-muted-foreground">
+                顯示於商品頁，讓買家了解預計出貨時間
+              </p>
+            </div>
+          )}
         </div>
 
         <DialogFooter>

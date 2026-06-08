@@ -23,7 +23,14 @@ import { createClient } from '@/lib/supabase/client'
 // ── Types ─────────────────────────────────────────────────────────────────────
 
 type Option = { id: string; option_name: string; option_value: string }
-type Variant = { id: string; name: string; price: number | null; stock: number }
+type Variant = {
+  id: string
+  name: string
+  price: number | null
+  stock: number
+  is_preorder: boolean
+  preorder_note: string | null
+}
 type Product = {
   id: string
   name: string
