@@ -11,7 +11,12 @@ export const metadata: Metadata = {
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type Variant = { price: number | null; stock: number; is_active: boolean }
+type Variant = {
+  price: number | null
+  stock: number
+  is_active: boolean
+  is_preorder: boolean
+}
 
 type Product = {
   id: string
@@ -26,6 +31,7 @@ type Product = {
 type EnrichedProduct = Omit<Product, 'product_variants'> & {
   min_price: number
   total_stock: number
+  has_preorder: boolean
 }
 
 const SHOP_BANNER_HEIGHT = { desktop: '280px', mobile: '160px' }
@@ -51,7 +57,7 @@ async function getProducts(): Promise<EnrichedProduct[]> {
     const { data, error } = await admin
       .from('products')
       .select(
-        `id, name, description, base_price, images, sort_order, product_variants (price, stock, is_active)`,
+        `id, name, description, base_price, images, sort_order, product_variants (price, stock, is_active, is_preorder)`,
       )
       .eq('is_active', true)
       .order('sort_order', { ascending: true })
@@ -66,8 +72,9 @@ async function getProducts(): Promise<EnrichedProduct[]> {
       const prices = active.map((v) => v.price ?? p.base_price)
       const min_price = prices.length ? Math.min(...prices) : p.base_price
       const total_stock = active.reduce((s, v) => s + v.stock, 0)
+      const has_preorder = active.some((v) => v.is_preorder)
       const { product_variants: _, ...rest } = p
-      return { ...rest, min_price, total_stock }
+      return { ...rest, min_price, total_stock, has_preorder }
     })
   } catch (e) {
     console.error('[shop] getProducts exception:', e)
@@ -80,8 +87,8 @@ async function getProducts(): Promise<EnrichedProduct[]> {
 function ProductCard({ p }: { p: EnrichedProduct }) {
   const thumb = Array.isArray(p.images) ? p.images[0] : null
   const onSale = p.min_price < p.base_price
-  const soldOut = p.total_stock === 0
-  const lowStock = !soldOut && p.total_stock <= 5
+  const soldOut = p.total_stock === 0 && !p.has_preorder
+  const lowStock = !soldOut && !p.has_preorder && p.total_stock <= 5
 
   return (
     <Link
@@ -109,7 +116,12 @@ function ProductCard({ p }: { p: EnrichedProduct }) {
               已售完
             </span>
           )}
-          {!soldOut && onSale && (
+          {p.has_preorder && (
+            <span className="rounded-full bg-blue-600 px-2.5 py-0.5 text-xs font-medium text-white">
+              預購中
+            </span>
+          )}
+          {!soldOut && !p.has_preorder && onSale && (
             <span className="rounded-full bg-rose-500 px-2.5 py-0.5 text-xs font-medium text-white">
               特惠
             </span>

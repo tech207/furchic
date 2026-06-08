@@ -19,6 +19,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/use-toast'
 import { createClient } from '@/lib/supabase/client'
+import { useCartStore } from '@/store/cartStore'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -336,6 +337,8 @@ export default function ShopProductPage() {
   const router = useRouter()
   const { toast } = useToast()
 
+  const addItem = useCartStore((s) => s.addItem)
+
   const [loading, setLoading] = useState(true)
   const [product, setProduct] = useState<Product | null>(null)
   const [variants, setVariants] = useState<Variant[]>([])
@@ -367,8 +370,11 @@ export default function ShopProductPage() {
     selected.price !== null &&
     selected.price < (product?.base_price ?? 0)
   const stock = selected?.stock ?? 0
-  const soldOut = !!selected && stock === 0
-  const lowStock = !!selected && !soldOut && stock <= 5
+  const isPreorder = selected?.is_preorder ?? false
+  const preorderNote = selected?.preorder_note ?? null
+  // Preorder variant with stock=0 is not "sold out" — still purchasable
+  const soldOut = !!selected && stock === 0 && !isPreorder
+  const lowStock = !!selected && !soldOut && !isPreorder && stock <= 5
   const images = Array.isArray(product?.images) ? product.images : []
   const earnPts = Math.floor(price * 0.01)
 
@@ -378,35 +384,37 @@ export default function ShopProductPage() {
   )
 
   async function handleAddToCart() {
-    if (!selId) return
+    if (!selId || !product || !selected) return
     setAdding(true)
     try {
-      const supabase = createClient()
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      if (!user) {
-        router.push(`/auth?next=/shop/${params.id}`)
-        return
-      }
-      const res = await fetch('/api/cart', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ variant_id: selId, quantity: qty }),
+      await addItem(
+        {
+          id: product.id,
+          name: product.name,
+          base_price: product.base_price,
+          images: Array.isArray(product.images) ? product.images : [],
+        },
+        {
+          id: selected.id,
+          name: selected.name,
+          sku: '',
+          price: selected.price,
+          stock: selected.stock,
+          is_preorder: selected.is_preorder,
+          preorder_note: selected.preorder_note ?? undefined,
+        },
+        qty,
+      )
+      toast({
+        title: selected.is_preorder ? '已加入預購' : '已加入購物車',
+        description: `${product.name} × ${qty}`,
       })
-      if (res.ok) {
-        toast({
-          title: '已加入購物車',
-          description: `${product?.name} × ${qty}`,
-        })
-      } else {
-        const j = (await res.json()) as { message?: string }
-        toast({
-          title: '加入失敗',
-          description: j.message ?? '請稍後再試',
-          variant: 'destructive',
-        })
-      }
+    } catch {
+      toast({
+        title: '加入失敗',
+        description: '請稍後再試',
+        variant: 'destructive',
+      })
     } finally {
       setAdding(false)
     }
@@ -475,7 +483,12 @@ export default function ShopProductPage() {
                 已售完
               </span>
             )}
-            {!soldOut && hasAnyOnSale && (
+            {isPreorder && (
+              <span className="rounded-full bg-blue-100 px-3 py-0.5 text-xs font-semibold text-blue-700">
+                預購中
+              </span>
+            )}
+            {!soldOut && !isPreorder && hasAnyOnSale && (
               <span className="rounded-full bg-rose-100 px-3 py-0.5 text-xs font-semibold text-rose-600">
                 限時特惠
               </span>
@@ -544,31 +557,47 @@ export default function ShopProductPage() {
                 )}
               </p>
               <div className="flex flex-wrap gap-2">
-                {variants.map((v) => (
-                  <button
-                    key={v.id}
-                    onClick={() => {
-                      setSelId(v.id)
-                      setQty(1)
-                    }}
-                    disabled={v.stock === 0}
-                    className={`rounded-xl border px-4 py-2 text-sm transition-all ${
-                      selId === v.id
-                        ? 'border-orange-500 bg-orange-50 font-semibold text-orange-600 shadow-sm'
-                        : v.stock === 0
-                          ? 'cursor-not-allowed border-gray-200 bg-gray-50 text-gray-300 line-through'
-                          : 'border-gray-200 text-gray-700 hover:border-orange-300 hover:bg-orange-50'
-                    }`}
-                  >
-                    {v.name}
-                    {v.stock > 0 && v.stock <= 5 && selId !== v.id && (
-                      <span className="ml-1 text-xs text-orange-500">
-                        ({v.stock})
-                      </span>
-                    )}
-                  </button>
-                ))}
+                {variants.map((v) => {
+                  const vSoldOut = v.stock === 0 && !v.is_preorder
+                  return (
+                    <button
+                      key={v.id}
+                      onClick={() => {
+                        setSelId(v.id)
+                        setQty(1)
+                      }}
+                      disabled={vSoldOut}
+                      className={`rounded-xl border px-4 py-2 text-sm transition-all ${
+                        selId === v.id
+                          ? 'border-orange-500 bg-orange-50 font-semibold text-orange-600 shadow-sm'
+                          : vSoldOut
+                            ? 'cursor-not-allowed border-gray-200 bg-gray-50 text-gray-300 line-through'
+                            : 'border-gray-200 text-gray-700 hover:border-orange-300 hover:bg-orange-50'
+                      }`}
+                    >
+                      {v.name}
+                      {v.is_preorder && (
+                        <span className="ml-1 text-xs text-blue-500">預購</span>
+                      )}
+                      {!v.is_preorder &&
+                        v.stock > 0 &&
+                        v.stock <= 5 &&
+                        selId !== v.id && (
+                          <span className="ml-1 text-xs text-orange-500">
+                            ({v.stock})
+                          </span>
+                        )}
+                    </button>
+                  )
+                })}
               </div>
+            </div>
+          )}
+
+          {/* 預購說明 */}
+          {isPreorder && preorderNote && (
+            <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-700">
+              {preorderNote}
             </div>
           )}
 
@@ -589,14 +618,22 @@ export default function ShopProductPage() {
                     {qty}
                   </span>
                   <button
-                    onClick={() => setQty((q) => Math.min(stock, q + 1))}
-                    disabled={qty >= stock}
+                    onClick={() =>
+                      isPreorder
+                        ? setQty((q) => q + 1)
+                        : setQty((q) => Math.min(stock, q + 1))
+                    }
+                    disabled={!isPreorder && qty >= stock}
                     className="flex h-10 w-10 items-center justify-center text-gray-500 hover:text-orange-600 disabled:opacity-30"
                   >
                     <Plus className="h-3.5 w-3.5" />
                   </button>
                 </div>
-                <span className="text-xs text-gray-400">庫存 {stock} 件</span>
+                {isPreorder ? (
+                  <span className="text-xs text-blue-500">預購無數量限制</span>
+                ) : (
+                  <span className="text-xs text-gray-400">庫存 {stock} 件</span>
+                )}
               </div>
             </div>
           )}
@@ -613,12 +650,14 @@ export default function ShopProductPage() {
                   onClick={handleAddToCart}
                   disabled={!selId || adding}
                   size="lg"
-                  className="w-full bg-orange-500 hover:bg-orange-600"
+                  className={`w-full ${isPreorder ? 'bg-blue-600 hover:bg-blue-700' : 'bg-orange-500 hover:bg-orange-600'}`}
                 >
                   {adding ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : !selId ? (
                     '請先選擇規格'
+                  ) : isPreorder ? (
+                    '立即預購'
                   ) : (
                     '加入購物車'
                   )}
