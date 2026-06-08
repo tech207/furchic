@@ -2,8 +2,16 @@ import { type NextRequest } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { apiSuccess, apiError } from '@/lib/auth/guards'
 import { emailRegisterSchema } from '@/lib/validations/user'
+import {
+  authRateLimit,
+  hashIp,
+  rateLimitResponse,
+} from '@/lib/security/rate-limit'
 
 export async function POST(request: NextRequest) {
+  const rl = await authRateLimit(hashIp(request))
+  if (!rl.allowed) return rateLimitResponse(rl)
+
   let body: unknown
   try {
     body = await request.json()
@@ -22,12 +30,15 @@ export async function POST(request: NextRequest) {
   const { data, error } = await supabase.auth.signUp({ email, password })
 
   if (error) {
-    // Use generic message to avoid revealing whether email is registered
     if (
       error.message.toLowerCase().includes('already') ||
       error.message.toLowerCase().includes('registered')
     ) {
-      return apiError('此 Email 已被使用，請直接登入或使用「忘記密碼」', 409, 'EMAIL_EXISTS')
+      return apiError(
+        '此 Email 已被使用，請直接登入或使用「忘記密碼」',
+        409,
+        'EMAIL_EXISTS',
+      )
     }
     console.error('[register]', error.message)
     return apiError('註冊失敗，請稍後再試', 500, 'REGISTER_FAILED')

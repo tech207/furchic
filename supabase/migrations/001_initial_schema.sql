@@ -382,7 +382,7 @@ BEGIN
       NEW.raw_user_meta_data->>'name',
       split_part(NEW.email, '@', 1)
     ),
-    COALESCE(NEW.app_metadata->>'provider', 'email'),
+    COALESCE(NEW.raw_app_meta_data->>'provider', 'email'),
     NEW.raw_user_meta_data->>'avatar_url',
     NOW(),
     NOW()

@@ -16,3 +16,6 @@ test-results
 *.tsbuildinfo
 python-api/.venv
 __pycache__
+
+.next-dev.*
+.vercel

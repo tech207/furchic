@@ -1,0 +1,9 @@
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3010
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 1352ms
+ ○ Compiling /auth ...
+ ✓ Compiled /auth in 2.8s (718 modules)
+ GET /auth 200 in 2995ms
