@@ -38,22 +38,36 @@ export default async function PetsPage() {
   } = await supabase.auth.getUser()
   if (!user) redirect('/auth')
 
-  type Row = { role: string; pets: PetCardData | null }
+  // Query own pets directly + caregiver pets separately, then merge
+  const [{ data: ownPetsRaw }, { data: caregiverRows }] = await Promise.all([
+    supabase
+      .from('pets')
+      .select('id, name, breed, birthday, photo_url, ai_photo_url, card_status')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('pet_caregivers')
+      .select(
+        'pet_id, role, pets (id, name, breed, birthday, photo_url, ai_photo_url, card_status)',
+      )
+      .eq('user_id', user.id)
+      .neq('role', 'owner')
+      .order('created_at', { ascending: false }),
+  ])
 
-  const { data: rows } = await supabase
-    .from('pet_caregivers')
-    .select(
-      `role,
-      pets (
-        id, name, breed, birthday, photo_url, ai_photo_url, card_status
-      )`,
-    )
-    .eq('user_id', user.id)
-    .order('created_at', { ascending: false })
+  type CaregiverRow = { pet_id: string; role: string; pets: PetCardData | null }
 
-  const pets = ((rows as unknown as Row[]) ?? [])
+  const ownPets = ((ownPetsRaw as unknown as PetCardData[]) ?? []).map((p) => ({
+    ...p,
+    my_role: 'owner' as const,
+  }))
+
+  const caregiverPets = ((caregiverRows as unknown as CaregiverRow[]) ?? [])
     .filter((r) => r.pets !== null)
+    .filter((r) => !ownPets.some((p) => p.id === r.pet_id))
     .map((r) => ({ ...r.pets!, my_role: r.role }))
+
+  const pets = [...ownPets, ...caregiverPets]
 
   return (
     <main className="container py-8">
