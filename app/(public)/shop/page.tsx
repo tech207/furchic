@@ -4,6 +4,8 @@ import { Tag, ShoppingBag, AlertCircle } from 'lucide-react'
 import HeroBanner, { type HeroBannerItem } from '@/components/home/HeroBanner'
 import { createAdminClient } from '@/lib/supabase/admin'
 
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: '商城 | Furchic',
   description: '探索 Furchic 精選 NFC 寵物智能卡與配件',
