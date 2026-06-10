@@ -1,11 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import {
   Check,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  X,
   Loader2,
   PawPrint,
 } from 'lucide-react'
@@ -13,6 +15,121 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { ImageUploader } from '@/components/common/ImageUploader'
 import { cn } from '@/lib/utils'
+
+// ── BreedCombobox ─────────────────────────────────────────────────────────────
+
+function BreedCombobox({
+  options,
+  value,
+  onChange,
+  placeholder,
+}: {
+  options: string[]
+  value: string
+  onChange: (v: string) => void
+  placeholder: string
+}) {
+  const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState(value)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  // sync query when value is cleared externally (species change)
+  useEffect(() => {
+    setQuery(value)
+  }, [value])
+
+  // close on outside click
+  useEffect(() => {
+    function handler(e: MouseEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(e.target as Node)
+      ) {
+        setOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [])
+
+  const filtered = query
+    ? options.filter((o) => o.toLowerCase().includes(query.toLowerCase()))
+    : options
+
+  function select(breed: string) {
+    onChange(breed)
+    setQuery(breed)
+    setOpen(false)
+  }
+
+  function clear() {
+    onChange('')
+    setQuery('')
+    setOpen(false)
+  }
+
+  return (
+    <div ref={containerRef} className="relative">
+      <div className="relative">
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value)
+            onChange(e.target.value)
+            setOpen(true)
+          }}
+          onFocus={() => setOpen(true)}
+          placeholder={placeholder}
+          className="mt-1.5 block w-full rounded-lg border bg-background px-3 py-2 pr-16 text-sm placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+        />
+        <div className="absolute inset-y-0 right-0 mt-1.5 flex items-center gap-0.5 pr-2">
+          {query && (
+            <button
+              type="button"
+              onClick={clear}
+              className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:text-foreground"
+          >
+            <ChevronDown
+              className={cn(
+                'h-4 w-4 transition-transform',
+                open && 'rotate-180',
+              )}
+            />
+          </button>
+        </div>
+      </div>
+
+      {open && filtered.length > 0 && (
+        <ul className="absolute z-50 mt-1 max-h-52 w-full overflow-auto rounded-lg border bg-white shadow-lg">
+          {filtered.map((b) => (
+            <li
+              key={b}
+              onMouseDown={(e) => {
+                e.preventDefault()
+                select(b)
+              }}
+              className={cn(
+                'cursor-pointer px-3 py-2 text-sm hover:bg-orange-50 hover:text-orange-700',
+                value === b && 'bg-orange-50 font-medium text-orange-700',
+              )}
+            >
+              {b}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
 
 const SPECIES_OPTIONS = [
   { value: 'dog', label: '狗' },
@@ -348,21 +465,14 @@ export function PetFormWizard({
           {species && (
             <div>
               <label className="block text-sm font-medium">品種</label>
-              <input
-                type="text"
-                list="breed-options"
+              <BreedCombobox
+                options={BREEDS_BY_SPECIES[species] ?? []}
                 value={breed}
-                onChange={(e) => setBreed(e.target.value)}
-                className="mt-1.5 block w-full rounded-lg border bg-background px-3 py-2 text-sm placeholder-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                onChange={setBreed}
                 placeholder={
                   species === 'other' ? '請輸入品種' : '選擇或輸入品種'
                 }
               />
-              <datalist id="breed-options">
-                {(BREEDS_BY_SPECIES[species] ?? []).map((b) => (
-                  <option key={b} value={b} />
-                ))}
-              </datalist>
             </div>
           )}
 
