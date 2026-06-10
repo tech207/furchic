@@ -7,8 +7,8 @@ import { createClient } from '@/lib/supabase/server'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: '商城 | Furchic',
-  description: '探索 Furchic 精選 NFC 寵物智能卡與配件',
+  title: '商城 | Pet.chic Weekend',
+  description: '探索 Pet.chic Weekend 精選 NFC 寵物智能卡與配件',
 }
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -17,7 +17,6 @@ type Variant = {
   price: number | null
   stock: number
   is_active: boolean
-  is_preorder: boolean
 }
 
 type Product = {
@@ -59,7 +58,7 @@ async function getProducts(): Promise<EnrichedProduct[]> {
     const { data, error } = await admin
       .from('products')
       .select(
-        `id, name, description, base_price, images, sort_order, product_variants (price, stock, is_active, is_preorder)`,
+        `id, name, description, base_price, images, sort_order, product_variants (price, stock, is_active)`,
       )
       .eq('is_active', true)
       .order('sort_order', { ascending: true })
@@ -74,7 +73,7 @@ async function getProducts(): Promise<EnrichedProduct[]> {
       const prices = active.map((v) => v.price ?? p.base_price)
       const min_price = prices.length ? Math.min(...prices) : p.base_price
       const total_stock = active.reduce((s, v) => s + v.stock, 0)
-      const has_preorder = active.some((v) => v.is_preorder)
+      const has_preorder = false
       const { product_variants: _, ...rest } = p
       return { ...rest, min_price, total_stock, has_preorder }
     })

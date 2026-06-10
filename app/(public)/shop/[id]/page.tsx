@@ -29,8 +29,6 @@ type Variant = {
   name: string
   price: number | null
   stock: number
-  is_preorder: boolean
-  preorder_note: string | null
 }
 type Product = {
   id: string
@@ -370,8 +368,8 @@ export default function ShopProductPage() {
     selected.price !== null &&
     selected.price < (product?.base_price ?? 0)
   const stock = selected?.stock ?? 0
-  const isPreorder = selected?.is_preorder ?? false
-  const preorderNote = selected?.preorder_note ?? null
+  const isPreorder = false
+  const preorderNote = null
   // Preorder variant with stock=0 is not "sold out" — still purchasable
   const soldOut = !!selected && stock === 0 && !isPreorder
   const lowStock = !!selected && !soldOut && !isPreorder && stock <= 5
@@ -400,13 +398,11 @@ export default function ShopProductPage() {
           sku: '',
           price: selected.price,
           stock: selected.stock,
-          is_preorder: selected.is_preorder,
-          preorder_note: selected.preorder_note ?? undefined,
         },
         qty,
       )
       toast({
-        title: selected.is_preorder ? '已加入預購' : '已加入購物車',
+        title: '已加入購物車',
         description: `${product.name} × ${qty}`,
       })
     } catch {
@@ -558,7 +554,7 @@ export default function ShopProductPage() {
               </p>
               <div className="flex flex-wrap gap-2">
                 {variants.map((v) => {
-                  const vSoldOut = v.stock === 0 && !v.is_preorder
+                  const vSoldOut = v.stock === 0
                   return (
                     <button
                       key={v.id}
@@ -576,17 +572,11 @@ export default function ShopProductPage() {
                       }`}
                     >
                       {v.name}
-                      {v.is_preorder && (
-                        <span className="ml-1 text-xs text-blue-500">預購</span>
+                      {v.stock > 0 && v.stock <= 5 && selId !== v.id && (
+                        <span className="ml-1 text-xs text-orange-500">
+                          ({v.stock})
+                        </span>
                       )}
-                      {!v.is_preorder &&
-                        v.stock > 0 &&
-                        v.stock <= 5 &&
-                        selId !== v.id && (
-                          <span className="ml-1 text-xs text-orange-500">
-                            ({v.stock})
-                          </span>
-                        )}
                     </button>
                   )
                 })}
