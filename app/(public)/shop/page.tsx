@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Tag, ShoppingBag, AlertCircle } from 'lucide-react'
 import HeroBanner, { type HeroBannerItem } from '@/components/home/HeroBanner'
-import { createAdminClient } from '@/lib/supabase/admin'
+import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
@@ -55,7 +55,7 @@ async function getShopBanners(): Promise<HeroBannerItem[]> {
 
 async function getProducts(): Promise<EnrichedProduct[]> {
   try {
-    const admin = createAdminClient()
+    const admin = createClient()
     const { data, error } = await admin
       .from('products')
       .select(
