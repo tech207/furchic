@@ -2,8 +2,10 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useState } from 'react'
 import {
   Building2,
+  ClipboardCheck,
   CreditCard,
   Gift,
   Handshake,
@@ -18,6 +20,7 @@ import {
   ScrollText,
   Settings,
   ShoppingBag,
+  Store,
   Tag,
   Ticket,
   Truck,
@@ -33,6 +36,7 @@ type NavItem = {
   href: string
   icon: React.ElementType
   permission?: string
+  badgeKey?: string
 }
 
 type NavGroup = {
@@ -156,6 +160,25 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    title: '廠商管理',
+    items: [
+      {
+        label: '廠商列表',
+        href: '/admin/vendors',
+        icon: Store,
+        permission: 'vendors',
+        badgeKey: 'pendingVendors',
+      },
+      {
+        label: '商品審核',
+        href: '/admin/products/pending',
+        icon: ClipboardCheck,
+        permission: 'products',
+        badgeKey: 'pendingProducts',
+      },
+    ],
+  },
+  {
     title: '系統',
     items: [
       {
@@ -170,10 +193,19 @@ const NAV_GROUPS: NavGroup[] = [
 
 // ── NavLink ───────────────────────────────────────────────────────────────────
 
-function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
+function NavLink({
+  item,
+  pathname,
+  badges,
+}: {
+  item: NavItem
+  pathname: string
+  badges: Record<string, number>
+}) {
   const Icon = item.icon
   const isActive =
     pathname === item.href || pathname.startsWith(`${item.href}/`)
+  const badgeCount = item.badgeKey ? (badges[item.badgeKey] ?? 0) : 0
 
   return (
     <Link
@@ -186,7 +218,12 @@ function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
       )}
     >
       <Icon className={cn('h-4 w-4 shrink-0', isActive && 'text-orange-600')} />
-      {item.label}
+      <span className="flex-1">{item.label}</span>
+      {badgeCount > 0 && (
+        <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-500 px-1.5 text-[11px] font-semibold text-white">
+          {badgeCount > 99 ? '99+' : badgeCount}
+        </span>
+      )}
     </Link>
   )
 }
@@ -195,6 +232,33 @@ function NavLink({ item, pathname }: { item: NavItem; pathname: string }) {
 
 export function AdminSidebar({ permissions }: { permissions: string[] }) {
   const pathname = usePathname()
+  const [badges, setBadges] = useState<Record<string, number>>({})
+
+  useEffect(() => {
+    async function fetchBadges() {
+      const updates: Record<string, number> = {}
+      await Promise.allSettled([
+        fetch('/api/admin/products/pending?page=1')
+          .then((r) => (r.ok ? r.json() : null))
+          .then((j) => {
+            if (j) updates.pendingProducts = j.data?.total ?? 0
+          })
+          .catch(() => undefined),
+        fetch('/api/admin/vendors?status=pending&page=1')
+          .then((r) => (r.ok ? r.json() : null))
+          .then((j) => {
+            if (j) updates.pendingVendors = j.data?.total ?? 0
+          })
+          .catch(() => undefined),
+      ])
+      if (Object.keys(updates).length > 0) {
+        setBadges((prev) => ({ ...prev, ...updates }))
+      }
+    }
+    void fetchBadges()
+    const interval = setInterval(() => void fetchBadges(), 60_000)
+    return () => clearInterval(interval)
+  }, [])
 
   const canAccess = (permission?: string) =>
     !permission || permissions.includes(permission)
@@ -207,7 +271,7 @@ export function AdminSidebar({ permissions }: { permissions: string[] }) {
           href="/admin"
           className="flex items-center gap-2 font-extrabold text-orange-600"
         >
-          🐾 Furchic Admin
+          🐾 Pet.chic Weekend Admin
         </Link>
       </div>
 
@@ -241,7 +305,12 @@ export function AdminSidebar({ permissions }: { permissions: string[] }) {
               </p>
               <div className="space-y-0.5">
                 {visible.map((item) => (
-                  <NavLink key={item.href} item={item} pathname={pathname} />
+                  <NavLink
+                    key={item.href}
+                    item={item}
+                    pathname={pathname}
+                    badges={badges}
+                  />
                 ))}
               </div>
             </div>

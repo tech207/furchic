@@ -28,13 +28,15 @@ export const GET = withAdmin(async (req: NextRequest, _ctx, _user) => {
   const url = new URL(req.url)
   const search = url.searchParams.get('search') ?? ''
   const filter = url.searchParams.get('filter') ?? 'all'
+  const vendorId = url.searchParams.get('vendor_id')
 
-  const admin = createAdminClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const admin = createAdminClient() as any
 
   let query = admin
     .from('products')
     .select(
-      `id, name, description, base_price, images, is_active, sort_order, created_at, updated_at,
+      `id, name, description, base_price, images, is_active, status, sort_order, created_at, updated_at,
       product_variants ( id, price, stock, is_active, low_stock_threshold )`,
     )
     .order('sort_order', { ascending: true })
@@ -43,6 +45,7 @@ export const GET = withAdmin(async (req: NextRequest, _ctx, _user) => {
   if (search.trim()) query = query.ilike('name', `%${search.trim()}%`)
   if (filter === 'active') query = query.eq('is_active', true)
   if (filter === 'inactive') query = query.eq('is_active', false)
+  if (vendorId) query = query.eq('vendor_id', vendorId)
 
   const { data, error } = await query
 

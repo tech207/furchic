@@ -6,7 +6,10 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { PawPrint, Loader2, CheckCircle } from 'lucide-react'
 import { Suspense } from 'react'
-import { profileSetupSchema, type ProfileSetupInput } from '@/lib/validations/user'
+import {
+  profileSetupSchema,
+  type ProfileSetupInput,
+} from '@/lib/validations/user'
 
 function FieldError({ message }: { message?: string }) {
   if (!message) return null
@@ -63,7 +66,6 @@ function SetupContent() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-gradient-to-b from-orange-50 to-white px-4 py-12">
       <div className="w-full max-w-md">
-
         {/* Header */}
         <div className="mb-8 flex flex-col items-center gap-2 text-center">
           <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#E8820C] shadow-lg">
@@ -71,8 +73,12 @@ function SetupContent() {
           </div>
           {isWelcome ? (
             <>
-              <h1 className="text-2xl font-bold text-gray-900">歡迎加入 Furchic！</h1>
-              <p className="text-sm text-gray-500">請填寫基本資料，讓我們更了解您</p>
+              <h1 className="text-2xl font-bold text-gray-900">
+                歡迎加入 Pet.chic Weekend！
+              </h1>
+              <p className="text-sm text-gray-500">
+                請填寫基本資料，讓我們更了解您
+              </p>
             </>
           ) : (
             <>
@@ -84,25 +90,27 @@ function SetupContent() {
 
         {/* Card */}
         <div className="rounded-2xl bg-white p-8 shadow-lg ring-1 ring-gray-100">
-
           {/* Progress */}
           <div className="mb-6 flex items-center gap-3 text-sm text-gray-500">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#E8820C] text-xs font-bold text-white">1</div>
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#E8820C] text-xs font-bold text-white">
+              1
+            </div>
             <span className="font-medium text-gray-900">填寫資料</span>
             <div className="h-px flex-1 bg-gray-200" />
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-500">2</div>
+            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-xs font-medium text-gray-500">
+              2
+            </div>
             <span>新增寵物</span>
           </div>
 
           {globalError && (
-            <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-700">
+            <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
               {globalError}
             </div>
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="space-y-5">
-
               {/* Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700">
@@ -131,19 +139,26 @@ function SetupContent() {
                   className="mt-1.5 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 focus:border-[#E8820C] focus:outline-none focus:ring-2 focus:ring-[#E8820C]/20"
                 />
                 <FieldError message={errors.phone?.message} />
-                <p className="mt-1 text-xs text-gray-400">格式：09xxxxxxxx（用於緊急聯絡）</p>
+                <p className="mt-1 text-xs text-gray-400">
+                  格式：09xxxxxxxx（用於緊急聯絡）
+                </p>
               </div>
 
               {/* Gender */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">性別</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  性別
+                </label>
                 <div className="mt-1.5 flex gap-3">
                   {[
                     { value: 'male', label: '男' },
                     { value: 'female', label: '女' },
                     { value: 'other', label: '其他' },
                   ].map(({ value, label }) => (
-                    <label key={value} className="flex cursor-pointer items-center gap-2">
+                    <label
+                      key={value}
+                      className="flex cursor-pointer items-center gap-2"
+                    >
                       <input
                         type="radio"
                         value={value}
@@ -159,7 +174,9 @@ function SetupContent() {
 
               {/* Birthday */}
               <div>
-                <label className="block text-sm font-medium text-gray-700">生日</label>
+                <label className="block text-sm font-medium text-gray-700">
+                  生日
+                </label>
                 <input
                   type="date"
                   {...register('birthday')}
@@ -198,11 +215,13 @@ function SetupContent() {
 
 export default function ProfileSetupPage() {
   return (
-    <Suspense fallback={
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[#E8820C]" />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-[#E8820C]" />
+        </div>
+      }
+    >
       <SetupContent />
     </Suspense>
   )

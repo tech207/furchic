@@ -224,7 +224,7 @@ export function generateProductTemplate(): Blob {
   ]
   const examples: unknown[][] = [
     [
-      'Furchic NFC 寵物卡',
+      'Pet.chic Weekend NFC 寵物卡',
       '寵物緊急聯絡 NFC 卡',
       399,
       '標準款',
@@ -234,7 +234,17 @@ export function generateProductTemplate(): Blob {
       5,
       'Y',
     ],
-    ['Furchic NFC 寵物卡', '', 399, '豪華款', 'NFC-001-DLX', 499, 30, 5, 'Y'],
+    [
+      'Pet.chic Weekend NFC 寵物卡',
+      '',
+      399,
+      '豪華款',
+      'NFC-001-DLX',
+      499,
+      30,
+      5,
+      'Y',
+    ],
     ['寵物皮革項圈', '柔軟牛皮項圈', 299, 'S 號', 'COLLAR-S', '', 20, 3, 'Y'],
     ['寵物皮革項圈', '', 299, 'M 號', 'COLLAR-M', '', 15, 3, 'Y'],
     ['寵物皮革項圈', '', 299, 'L 號', 'COLLAR-L', '', 10, 3, 'N'],

@@ -1,5 +1,5 @@
 -- ============================================================
--- Furchic WebApp — 001_initial_schema.sql
+-- Pet.chic Weekend WebApp — 001_initial_schema.sql
 -- ============================================================
 
 BEGIN;
@@ -846,7 +846,7 @@ ON CONFLICT (key) DO NOTHING;
 -- ── company_info placeholder ──────────────────────────────────────────────────
 
 INSERT INTO company_info (id, name, description, social_links, updated_at)
-VALUES (1, 'Furchic', '讓每隻寵物都有自己的身份', '{}', NOW())
+VALUES (1, 'Pet.chic Weekend', '讓每隻寵物都有自己的身份', '{}', NOW())
 ON CONFLICT (id) DO NOTHING;
 
 COMMIT;

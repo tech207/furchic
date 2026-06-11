@@ -1,5 +1,5 @@
 -- ============================================================
--- Furchic WebApp — seed.sql
+-- Pet.chic Weekend WebApp — seed.sql
 -- 執行順序：migration 完成後執行
 --
 -- 管理員設定方式：
@@ -50,7 +50,7 @@ INSERT INTO banners (id, title, image_url, link_url, type, sort_order, is_active
 VALUES
   (
     'b0000000-0000-0000-0000-000000000001',
-    'Furchic NFC 寵物名片 — 讓愛不迷路',
+    'Pet.chic Weekend NFC 寵物名片 — 讓愛不迷路',
     '/images/banner-hero-01.jpg',
     '/shop',
     'hero',
@@ -74,7 +74,7 @@ ON CONFLICT (id) DO NOTHING;
 INSERT INTO products (id, name, description, base_price, images, is_active, sort_order)
 VALUES (
   'c0000000-0000-0000-0001-000000000001',
-  'Furchic NFC 寵物名片卡',
+  'Pet.chic Weekend NFC 寵物名片卡',
   '客製化 NFC 卡片，內含寵物 AI 去背照片合成，掃描即顯示緊急聯絡資訊。CR-80 標準尺寸，防水材質。',
   590,
   '["/images/products/nfc-card-01.jpg", "/images/products/nfc-card-02.jpg"]',

@@ -13,17 +13,17 @@ const TABS: { value: Tab; label: string; desc: string }[] = [
   {
     value: 'brand',
     label: '品牌聯名',
-    desc: '與 Furchic 聯名推出限定款 NFC 寵物智能卡，讓您的品牌走進每一個寵物家庭。',
+    desc: '與 Pet.chic Weekend 聯名推出限定款 NFC 寵物智能卡，讓您的品牌走進每一個寵物家庭。',
   },
   {
     value: 'store',
     label: '通路合作',
-    desc: '透過您的通路銷售 Furchic 產品，共享寵物市場的龐大商機。',
+    desc: '透過您的通路銷售 Pet.chic Weekend 產品，共享寵物市場的龐大商機。',
   },
   {
     value: 'enterprise',
     label: '動物醫院・寵物店',
-    desc: '成為 Furchic 認證合作夥伴，為您的客戶提供更完整的寵物安全解決方案。',
+    desc: '成為 Pet.chic Weekend 認證合作夥伴，為您的客戶提供更完整的寵物安全解決方案。',
   },
 ]
 
@@ -111,7 +111,7 @@ export default function PartnersPage() {
             合作夥伴
           </h1>
           <p className="mt-4 text-base leading-relaxed text-gray-500">
-            感謝所有與 Furchic 攜手同行的夥伴，
+            感謝所有與 Pet.chic Weekend 攜手同行的夥伴，
             <br />
             讓我們一起守護每一個毛孩的美好生活。
           </p>

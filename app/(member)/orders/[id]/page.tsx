@@ -5,7 +5,7 @@ import { ChevronLeft, Package, MapPin, Truck, CreditCard } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { cn } from '@/lib/utils'
 
-export const metadata: Metadata = { title: '訂單詳情 | Furchic' }
+export const metadata: Metadata = { title: '訂單詳情 | Pet.chic Weekend' }
 
 // ── Status config ─────────────────────────────────────────────────────────────
 

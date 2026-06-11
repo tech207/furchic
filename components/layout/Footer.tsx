@@ -126,7 +126,7 @@ export async function Footer() {
           {/* Col 1 — Brand */}
           <div className="space-y-4">
             <span className="text-2xl font-extrabold tracking-tight text-white">
-              Furchic
+              Pet.chic Weekend
             </span>
             <p className="max-w-xs text-sm leading-relaxed text-gray-400">
               讓每一個毛孩，都被世界溫柔記得。
@@ -223,7 +223,7 @@ export async function Footer() {
 
         {/* ── Bottom bar ──────────────────────────────────────────────────── */}
         <div className="mt-12 flex flex-col items-center justify-between gap-3 border-t border-gray-800 pt-6 text-xs text-gray-500 sm:flex-row">
-          <span>© {year} Furchic. All rights reserved.</span>
+          <span>© {year} Pet.chic Weekend. All rights reserved.</span>
           <div className="flex items-center gap-3">
             <Link
               href="/policy/service"

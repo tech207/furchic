@@ -14,9 +14,9 @@ import { StepsSection } from '@/components/home/StepsSection'
 import { Button } from '@/components/ui/button'
 
 export const metadata: Metadata = {
-  title: 'Furchic — NFC 寵物智能卡',
+  title: 'Pet.chic Weekend — NFC 寵物智能卡',
   description:
-    'Furchic 提供高質感 NFC 寵物智能卡，讓您的毛寶貝資訊隨掃即得，緊急時刻守護牠的安全。',
+    'Pet.chic Weekend 提供高質感 NFC 寵物智能卡，讓您的毛寶貝資訊隨掃即得，緊急時刻守護牠的安全。',
 }
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -130,7 +130,7 @@ function NfcCardMockup() {
       <div className="absolute inset-0 flex flex-col justify-between rounded-2xl bg-gradient-to-br from-orange-500 to-red-600 p-6 shadow-2xl">
         <div className="flex items-center justify-between">
           <span className="text-xl font-extrabold tracking-wide text-white/90">
-            Furchic
+            Pet.chic Weekend
           </span>
           <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-white/50">
             <Sparkles className="h-4 w-4 text-white" />
@@ -187,7 +187,7 @@ function ProductCard({ product }: { product: Product }) {
         ) : (
           <div className="flex h-full w-full flex-col items-center justify-center text-muted-foreground">
             <span className="mb-2 text-5xl">🐾</span>
-            <span className="text-xs">Furchic</span>
+            <span className="text-xs">Pet.chic Weekend</span>
           </div>
         )}
       </div>
@@ -325,7 +325,7 @@ export default async function HomePage() {
                 一卡在手，守護無憂
               </h2>
               <p className="mb-8 leading-relaxed text-muted-foreground">
-                Furchic NFC
+                Pet.chic Weekend NFC
                 智能卡融合先進感應技術與精緻工藝，為您的毛寶貝打造最完整的數位守護。
               </p>
               <div className="space-y-5">
@@ -379,7 +379,7 @@ export default async function HomePage() {
 
         <div className="container relative mx-auto px-4 text-center">
           <p className="mb-4 text-sm font-semibold uppercase tracking-widest text-white/70">
-            Join Furchic
+            Join Pet.chic Weekend
           </p>
           <h2 className="mb-5 text-4xl font-extrabold leading-tight text-white md:text-6xl">
             讓愛，
@@ -387,7 +387,7 @@ export default async function HomePage() {
             從此有保障
           </h2>
           <p className="mx-auto mb-10 max-w-xl text-lg text-white/85 md:text-xl">
-            超過 10,000 位飼主選擇 Furchic，
+            超過 10,000 位飼主選擇 Pet.chic Weekend，
             <br />
             今天就加入，給毛孩最好的守護。
           </p>

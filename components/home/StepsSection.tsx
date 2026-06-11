@@ -9,7 +9,7 @@ const STEPS = [
     icon: ShoppingBag,
     step: '01',
     title: '選購 NFC 卡',
-    desc: '到 Furchic 官網挑選適合您寵物的 NFC 智能卡款式，精緻卡面任您搭配。',
+    desc: '到 Pet.chic Weekend 官網挑選適合您寵物的 NFC 智能卡款式，精緻卡面任您搭配。',
     color: 'bg-orange-100 text-orange-600',
   },
   {

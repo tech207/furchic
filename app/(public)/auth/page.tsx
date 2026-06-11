@@ -114,6 +114,9 @@ function AuthContent() {
     errorParam ? (OAUTH_ERRORS[errorParam] ?? '登入失敗，請稍後再試') : null,
   )
   const [forgotSent, setForgotSent] = useState(false)
+  const [registerEmailSent, setRegisterEmailSent] = useState<string | null>(
+    null,
+  )
   const [isLoading, setIsLoading] = useState(false)
 
   const supabase = createClient()
@@ -201,8 +204,30 @@ function AuthContent() {
         setGlobalError(json.message ?? '註冊失敗，請稍後再試')
         return
       }
-      // After register, sign in and redirect
-      await handleLogin({ email: data.email, password: data.password })
+      // Try to auto-login after register
+      const loginRes = await fetch('/api/auth/email/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: data.email, password: data.password }),
+      })
+      const loginJson = (await loginRes.json()) as {
+        data?: { isNewUser: boolean; nextUrl: string }
+        code?: string
+        message?: string
+      }
+      if (loginJson.code === 'EMAIL_NOT_CONFIRMED') {
+        // Email confirmation required — show success, ask user to check inbox
+        setRegisterEmailSent(data.email)
+        return
+      }
+      if (!loginRes.ok) {
+        // Registered but can't auto-login — let them try logging in manually
+        setMode('login')
+        setGlobalError('帳號已建立，請直接登入')
+        return
+      }
+      router.push(loginJson.data?.nextUrl ?? '/pets')
+      router.refresh()
     } catch {
       setGlobalError('網路錯誤，請稍後再試')
     } finally {
@@ -238,7 +263,7 @@ function AuthContent() {
             <PawPrint className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-            Furchic
+            Pet.chic Weekend
           </h1>
           <p className="text-sm text-gray-500">讓每隻寵物都有自己的身份</p>
         </div>
@@ -367,8 +392,31 @@ function AuthContent() {
             </form>
           )}
 
+          {/* ── Register: email confirmation sent ─────────────────────────────── */}
+          {mode === 'register' && registerEmailSent && (
+            <div className="space-y-4">
+              <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700">
+                <p className="font-medium">確認信已寄出！</p>
+                <p className="mt-1">
+                  請至 <strong>{registerEmailSent}</strong> 查收確認信，
+                  點擊信件中的連結後即可登入。
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setRegisterEmailSent(null)
+                  setMode('login')
+                }}
+                className="w-full text-center text-sm text-[#E8820C] hover:underline"
+              >
+                前往登入
+              </button>
+            </div>
+          )}
+
           {/* ── Register form ──────────────────────────────────────────────────── */}
-          {mode === 'register' && (
+          {mode === 'register' && !registerEmailSent && (
             <form
               onSubmit={registerForm.handleSubmit(handleRegister)}
               noValidate

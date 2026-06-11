@@ -51,6 +51,8 @@ export async function GET(req: NextRequest) {
       product_variants ( id, price, stock, is_active, low_stock_threshold )`,
     )
     .eq('is_active', true)
+    // Vendor products must be approved; platform products (vendor_id IS NULL) always visible
+    .or('vendor_id.is.null,is_approved.eq.true')
 
   if (search.trim()) {
     query = query.ilike('name', `%${search.trim()}%`)

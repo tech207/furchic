@@ -9,6 +9,7 @@ import {
   Eye,
   Package,
   RefreshCw,
+  ReceiptText,
   ShoppingBag,
   Truck,
   UserPlus,
@@ -350,6 +351,24 @@ export default function AdminDashboard() {
           </>
         )}
       </div>
+
+      <Link
+        href="/admin/reports"
+        className="flex items-center justify-between rounded-xl border bg-card p-4 transition-colors hover:bg-muted/40"
+      >
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-orange-50 text-orange-600">
+            <ReceiptText className="h-5 w-5" />
+          </span>
+          <div className="min-w-0">
+            <p className="font-semibold">廠商報表</p>
+            <p className="truncate text-sm text-muted-foreground">
+              查看廠商本月銷售摘要與匯出月結對帳單
+            </p>
+          </div>
+        </div>
+        <span className="text-sm font-medium text-orange-600">前往</span>
+      </Link>
 
       {/* ── Row 3：圖表（左 2/3 訂單趨勢 + 右 1/3 狀態圓餅）─────────────── */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">

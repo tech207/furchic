@@ -3,10 +3,10 @@ import './globals.css'
 
 export const metadata: Metadata = {
   title: {
-    default: 'Furchic',
-    template: '%s | Furchic',
+    default: 'Pet.chic Weekend',
+    template: '%s | Pet.chic Weekend',
   },
-  description: 'Furchic pet NFC card and shopping experience.',
+  description: 'Pet.chic Weekend pet NFC card and shopping experience.',
 }
 
 export default function RootLayout({

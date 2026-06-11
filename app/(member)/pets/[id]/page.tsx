@@ -16,13 +16,21 @@ export default async function PetDetailPage({
   if (!user) redirect('/auth')
 
   // Verify access via pet_caregivers
-  const { data: myEntryRaw } = await supabase
+  const { data: myEntryRaw, error: accessError } = await supabase
     .from('pet_caregivers')
     .select('role')
     .eq('pet_id', params.id)
     .eq('user_id', user.id)
     .single()
 
+  if (accessError) {
+    console.error(
+      '[pet detail] pet_caregivers access check failed:',
+      accessError.message,
+      'pet_id:',
+      params.id,
+    )
+  }
   if (!myEntryRaw) notFound()
   const myRole = (myEntryRaw as unknown as { role: 'owner' | 'caregiver' }).role
 
@@ -33,6 +41,14 @@ export default async function PetDetailPage({
     .eq('id', params.id)
     .single()
 
+  if (petErr) {
+    console.error(
+      '[pet detail] pets query failed:',
+      petErr.message,
+      'pet_id:',
+      params.id,
+    )
+  }
   if (petErr || !petRaw) notFound()
 
   const petData = petRaw as unknown as Record<string, unknown>

@@ -94,7 +94,7 @@ export default function NewProductPage() {
             <Label htmlFor="name">商品名稱 *</Label>
             <Input
               id="name"
-              placeholder="例：Furchic NFC 寵物名片卡"
+              placeholder="例：Pet.chic Weekend NFC 寵物名片卡"
               value={name}
               onChange={(e) => setName(e.target.value)}
               maxLength={200}

@@ -20,7 +20,7 @@ import { FaqSection, type Faq } from '@/components/about/FaqSection'
 export const metadata: Metadata = {
   title: '關於我們',
   description:
-    '了解 Furchic 的品牌故事、服務理念，以及我們如何以 NFC 科技守護每一隻毛孩的安全。',
+    '了解 Pet.chic Weekend 的品牌故事、服務理念，以及我們如何以 NFC 科技守護每一隻毛孩的安全。',
 }
 
 type AboutInfo = {
@@ -50,10 +50,10 @@ type PublicSettings = {
 }
 
 const ABOUT_FALLBACK: AboutInfo = {
-  name: 'PET.CHIC',
+  name: 'Pet.chic Weekend',
   tagline: '讓每一個毛孩，都被世界溫柔記得',
   description:
-    'PET.CHIC 是專為寵物飼主設計的 NFC 智能卡服務。我們深信每一隻毛孩都值得被妥善保護，透過現代科技讓寵物資訊隨時可得，在緊急時刻發揮最大守護力量。',
+    'Pet.chic Weekend 是專為寵物飼主設計的 NFC 智能卡服務。我們深信每一隻毛孩都值得被妥善保護，透過現代科技讓寵物資訊隨時可得，在緊急時刻發揮最大守護力量。',
   email: 'hello@furchic.com',
   phone: '+886-2-1234-5678',
 }
@@ -185,10 +185,10 @@ export default async function AboutPage() {
 
           <div className="max-w-3xl">
             <p className="mb-4 text-sm font-semibold uppercase tracking-[0.28em] text-orange-100">
-              About PET.CHIC
+              About Pet.chic Weekend
             </p>
             <h1 className="text-4xl font-black leading-tight sm:text-5xl lg:text-6xl">
-              關於 PET.CHIC
+              關於 Pet.chic Weekend
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-8 text-orange-50 sm:text-lg">
               {description}

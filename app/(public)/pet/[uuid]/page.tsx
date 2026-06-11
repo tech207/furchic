@@ -150,12 +150,12 @@ export async function generateMetadata({
   params: { uuid: string }
 }): Promise<Metadata> {
   if (!UUID_REGEX.test(params.uuid)) {
-    return { title: '找不到頁面 | Furchic' }
+    return { title: '找不到頁面 | Pet.chic Weekend' }
   }
 
   const data = await getCardData(params.uuid)
   if (!data || 'disabled' in data) {
-    return { title: '寵物名片 | Furchic' }
+    return { title: '寵物名片 | Pet.chic Weekend' }
   }
 
   const { pet } = data
@@ -164,7 +164,7 @@ export async function generateMetadata({
   const description = `這是 ${name}${breedPart} 的寵物緊急聯絡資訊，請聯絡以下照護者`
 
   return {
-    title: `${name} 的緊急聯絡卡 | Furchic`,
+    title: `${name} 的緊急聯絡卡 | Pet.chic Weekend`,
     description,
     openGraph: {
       title: `${name} 的緊急聯絡卡`,
@@ -176,7 +176,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: 'summary',
-      title: `${name} 的緊急聯絡卡 | Furchic`,
+      title: `${name} 的緊急聯絡卡 | Pet.chic Weekend`,
       description,
       ...(pet.photo_url && { images: [pet.photo_url] }),
     },
@@ -223,7 +223,7 @@ function DisabledPage() {
           此寵物卡片目前已停用
         </h1>
         <p className="text-sm text-gray-400">
-          飼主可在 Furchic WebApp 重新啟用
+          飼主可在 Pet.chic Weekend WebApp 重新啟用
         </p>
       </div>
     </main>
@@ -504,7 +504,7 @@ export default async function PetCardPage({
             <div className="flex items-center gap-1.5 pt-2">
               <PawPrint className="h-4 w-4 text-primary/60" />
               <span className="text-sm font-semibold tracking-wide text-gray-500">
-                Furchic
+                Pet.chic Weekend
               </span>
             </div>
             <p className="text-xs text-gray-400">讓每隻毛孩都有一張安心名片</p>

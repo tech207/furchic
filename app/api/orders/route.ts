@@ -18,7 +18,12 @@ type CartRow = {
     price: number | null
     stock: number
     is_active: boolean
-    products: { id: string; base_price: number; is_active: boolean } | null
+    products: {
+      id: string
+      base_price: number
+      is_active: boolean
+      vendor_id: string | null
+    } | null
   } | null
 }
 
@@ -79,7 +84,7 @@ export const POST = withAuth(async (req: NextRequest, _ctx, user) => {
       variant_id, quantity,
       product_variants (
         id, price, stock, is_active,
-        products ( id, base_price, is_active )
+        products ( id, base_price, is_active, vendor_id )
       )
     `,
     )
@@ -97,6 +102,8 @@ export const POST = withAuth(async (req: NextRequest, _ctx, user) => {
     quantity: number
     unit_price: number
   }[] = []
+  // Track quantity per vendor to determine primary vendor (for commission)
+  const vendorQtyMap = new Map<string, number>()
 
   for (const row of rows) {
     const variant = row.product_variants
@@ -113,6 +120,22 @@ export const POST = withAuth(async (req: NextRequest, _ctx, user) => {
       quantity: qty,
       unit_price: unitPrice,
     })
+    if (product.vendor_id) {
+      vendorQtyMap.set(
+        product.vendor_id,
+        (vendorQtyMap.get(product.vendor_id) ?? 0) + qty,
+      )
+    }
+  }
+
+  // Primary vendor = the vendor with the most item quantity in this order
+  let primaryVendorId: string | null = null
+  let maxVendorQty = 0
+  for (const [vid, qty] of vendorQtyMap) {
+    if (qty > maxVendorQty) {
+      maxVendorQty = qty
+      primaryVendorId = vid
+    }
   }
 
   if (subtotal === 0)
@@ -249,6 +272,8 @@ export const POST = withAuth(async (req: NextRequest, _ctx, user) => {
       cvs_store_id: cvs_store_id ?? null,
       cvs_store_name: cvs_store_name ?? null,
       note: note ?? null,
+      vendor_id: primaryVendorId,
+      sales_channel: 'online_daily',
     } as never)
     .select('id')
     .single()

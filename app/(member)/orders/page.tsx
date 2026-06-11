@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-export const metadata: Metadata = { title: '我的訂單 | Furchic' }
+export const metadata: Metadata = { title: '我的訂單 | Pet.chic Weekend' }
 
 // ── Status config ──────────────────────────────────────────────────────────────
 

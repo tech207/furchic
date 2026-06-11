@@ -68,7 +68,7 @@ type PetRow = {
   ai_photo_url: string | null
   card_status: 'none' | 'pending' | 'active' | 'disabled'
   created_at: string
-  nfc_cards: { id: string; status: string }[]
+  nfc_cards: { id: string; status: string }[] | null
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -206,16 +206,19 @@ export const GET = withAuth(async (_req, _ctx, user) => {
 
   // ── Shape pets ───────────────────────────────────────────────────────────────
 
-  const petsWithNfc: PetWithNfcStatus[] = pets.map((pet) => ({
-    id: pet.id,
-    name: pet.name,
-    breed: pet.breed,
-    photo_url: pet.photo_url,
-    ai_photo_url: pet.ai_photo_url,
-    card_status: pet.card_status,
-    nfc_active: pet.nfc_cards.some((c) => c.status === 'active'),
-    created_at: pet.created_at,
-  }))
+  const petsWithNfc: PetWithNfcStatus[] = pets.map((pet) => {
+    const nfcCards = pet.nfc_cards ?? []
+    return {
+      id: pet.id,
+      name: pet.name,
+      breed: pet.breed,
+      photo_url: pet.photo_url,
+      ai_photo_url: pet.ai_photo_url,
+      card_status: pet.card_status,
+      nfc_active: nfcCards.some((c) => c.status === 'active'),
+      created_at: pet.created_at,
+    }
+  })
 
   // ── Stats ────────────────────────────────────────────────────────────────────
 
@@ -223,7 +226,8 @@ export const GET = withAuth(async (_req, _ctx, user) => {
     total_orders: totalOrdersRes.count ?? 0,
     total_pets: pets.length,
     active_nfc_cards: pets.reduce(
-      (sum, p) => sum + p.nfc_cards.filter((c) => c.status === 'active').length,
+      (sum, p) =>
+        sum + (p.nfc_cards ?? []).filter((c) => c.status === 'active').length,
       0,
     ),
   }

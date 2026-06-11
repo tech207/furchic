@@ -1,5 +1,5 @@
 """
-Furchic Card Generator — FastAPI microservice
+Pet.chic Weekend Card Generator — FastAPI microservice
 Generates NFC card front/back PNG images + QR codes.
 
 Required env vars:
@@ -44,15 +44,15 @@ async def require_api_key(key: str = Security(_api_key_header)) -> str:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logging.getLogger(__name__).info("Furchic card generator started")
+    logging.getLogger(__name__).info("Pet.chic Weekend card generator started")
     yield
-    logging.getLogger(__name__).info("Furchic card generator stopped")
+    logging.getLogger(__name__).info("Pet.chic Weekend card generator stopped")
 
 
 # ── App factory ───────────────────────────────────────────────────────────────
 
 app = FastAPI(
-    title="Furchic Card Generator",
+    title="Pet.chic Weekend Card Generator",
     version="1.0.0",
     description="NFC card image generation microservice",
     docs_url="/docs",

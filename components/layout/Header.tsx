@@ -145,10 +145,10 @@ export function Header() {
         {/* Logo */}
         <Link
           href="/"
-          className="flex items-center gap-2 text-xl font-extrabold tracking-tight text-orange-600"
+          className="flex items-center gap-2 whitespace-nowrap text-lg font-extrabold tracking-tight text-orange-600 sm:text-xl"
         >
           <span className="text-xl">🐾</span>
-          Furchic
+          Pet.chic Weekend
         </Link>
 
         {/* Desktop nav */}

@@ -70,7 +70,7 @@ type PetRow = {
   photo_url: string | null
   ai_photo_url: string | null
   card_status: string
-  nfc_cards: { id: string; status: string }[]
+  nfc_cards: { id: string; status: string }[] | null
 }
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -509,9 +509,8 @@ async function DashboardContent() {
             <div className="space-y-2.5">
               {pets.slice(0, 3).map((pet) => {
                 const photo = pet.ai_photo_url ?? pet.photo_url
-                const isActive = pet.nfc_cards.some(
-                  (c) => c.status === 'active',
-                )
+                const nfcCards = pet.nfc_cards ?? []
+                const isActive = nfcCards.some((c) => c.status === 'active')
 
                 return (
                   <Link

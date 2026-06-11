@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test'
 
 test('首頁載入正常', async ({ page }) => {
   await page.goto('/')
-  await expect(page).toHaveTitle(/Furchic/)
+  await expect(page).toHaveTitle(/Pet\.chic Weekend/)
   // Hero section visible
   await expect(page.locator('section').first()).toBeVisible()
   // No console errors that would indicate a crash
@@ -24,7 +24,7 @@ test('首頁載入正常', async ({ page }) => {
 
 test('商城頁載入正常', async ({ page }) => {
   await page.goto('/shop')
-  await expect(page).toHaveTitle(/商城|Shop|Furchic/)
+  await expect(page).toHaveTitle(/商城|Shop|Pet\.chic Weekend/)
   // Page renders without blank screen
   await expect(page.locator('main, body')).toBeVisible()
   // No fatal JS error boundary

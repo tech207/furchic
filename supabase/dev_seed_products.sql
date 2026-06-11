@@ -1,5 +1,5 @@
 -- ============================================================
--- Furchic — dev_seed_products.sql
+-- Pet.chic Weekend — dev_seed_products.sql
 -- 開發用假資料，在 Supabase SQL Editor 執行
 -- 圖片使用 picsum.photos placeholder，讓商品頁面可正常顯示
 -- ============================================================
@@ -11,7 +11,7 @@ BEGIN;
 INSERT INTO products (id, name, description, base_price, images, is_active, sort_order)
 VALUES (
   'c0000000-0000-0000-0001-000000000001',
-  'Furchic NFC 寵物名片卡',
+  'Pet.chic Weekend NFC 寵物名片卡',
   '客製化 NFC 卡片，內含寵物 AI 去背照片合成，掃描即顯示緊急聯絡資訊。CR-80 標準尺寸，防水材質，全台宅配。',
   590,
   '["https://picsum.photos/seed/nfc-card-a/800/800","https://picsum.photos/seed/nfc-card-b/800/800","https://picsum.photos/seed/nfc-card-c/800/800"]',

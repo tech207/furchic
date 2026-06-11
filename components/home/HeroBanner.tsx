@@ -51,7 +51,7 @@ function DefaultHero() {
       </div>
       <div className="relative z-10 flex h-full max-w-3xl flex-col items-start justify-center px-8 md:px-20">
         <p className="mb-2 text-sm font-medium uppercase tracking-widest text-white/70 md:text-base">
-          Furchic NFC 智能卡
+          Pet.chic Weekend NFC 智能卡
         </p>
         <h2 className="mb-3 text-3xl font-extrabold leading-tight text-white md:mb-4 md:text-6xl">
           讓愛更安心
@@ -98,7 +98,7 @@ function GradientContent({ banner }: { banner: HeroBannerItem }) {
       </div>
       <div className="relative z-10 flex h-full max-w-3xl flex-col items-start justify-center px-8 md:px-20">
         <p className="mb-2 text-sm font-medium uppercase tracking-widest text-white/70 md:text-base">
-          Furchic NFC 智能卡
+          Pet.chic Weekend NFC 智能卡
         </p>
         {banner.title && (
           <h2 className="mb-3 text-3xl font-extrabold leading-tight text-white md:mb-4 md:text-6xl">

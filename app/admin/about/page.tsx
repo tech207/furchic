@@ -37,7 +37,7 @@ type AboutData = {
 }
 
 const DEFAULTS: AboutData = {
-  company_name: 'Furchic',
+  company_name: 'Pet.chic Weekend',
   company_description: '',
   company_logo_url: '',
   company_email: '',
@@ -175,7 +175,7 @@ export default function AdminAboutPage() {
               <Input
                 value={data.company_name}
                 onChange={(e) => set('company_name', e.target.value)}
-                placeholder="Furchic"
+                placeholder="Pet.chic Weekend"
               />
             </div>
             <div className="space-y-2">
@@ -342,7 +342,7 @@ export default function AdminAboutPage() {
                 />
               )}
               <h1 className="text-3xl font-extrabold">
-                {data.company_name || 'Furchic'}
+                {data.company_name || 'Pet.chic Weekend'}
               </h1>
               <p className="mx-auto mt-2 max-w-md text-sm text-white/80">
                 讓每一個毛孩，都被世界溫柔記得

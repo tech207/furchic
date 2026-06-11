@@ -9,36 +9,41 @@ const OG_IMAGE = `${SITE_URL}/og-image.jpg`
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'Furchic — NFC 寵物智能卡',
-    template: '%s | Furchic',
+    default: 'Pet.chic Weekend — NFC 寵物智能卡',
+    template: '%s | Pet.chic Weekend',
   },
   description:
-    'Furchic 提供高質感 NFC 寵物智能卡，讓您的毛寶貝資訊隨掃即得，緊急時刻守護牠的安全。',
+    'Pet.chic Weekend 提供高質感 NFC 寵物智能卡，讓您的毛寶貝資訊隨掃即得，緊急時刻守護牠的安全。',
   keywords: [
     'NFC 寵物卡',
     '寵物智能卡',
     '寵物掛牌',
-    'Furchic',
+    'Pet.chic Weekend',
     '寵物安全',
     '毛孩守護',
   ],
-  authors: [{ name: 'Furchic', url: SITE_URL }],
-  creator: 'Furchic',
+  authors: [{ name: 'Pet.chic Weekend', url: SITE_URL }],
+  creator: 'Pet.chic Weekend',
   openGraph: {
     type: 'website',
     locale: 'zh_TW',
     url: SITE_URL,
-    siteName: 'Furchic',
-    title: 'Furchic — NFC 寵物智能卡',
+    siteName: 'Pet.chic Weekend',
+    title: 'Pet.chic Weekend — NFC 寵物智能卡',
     description:
       '一張智能卡，守護你的毛寶貝。掃描即可獲取寵物完整資訊，緊急情況快速響應。',
     images: [
-      { url: OG_IMAGE, width: 1200, height: 630, alt: 'Furchic NFC 寵物卡' },
+      {
+        url: OG_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: 'Pet.chic Weekend NFC 寵物卡',
+      },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Furchic — NFC 寵物智能卡',
+    title: 'Pet.chic Weekend — NFC 寵物智能卡',
     description: '一張智能卡，守護你的毛寶貝。',
     images: [OG_IMAGE],
   },
@@ -53,10 +58,11 @@ export const metadata: Metadata = {
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Furchic',
+  name: 'Pet.chic Weekend',
   url: SITE_URL,
   logo: `${SITE_URL}/logo.png`,
-  description: 'Furchic 提供 NFC 寵物智能卡服務，讓您的寵物資訊隨時可得。',
+  description:
+    'Pet.chic Weekend 提供 NFC 寵物智能卡服務，讓您的寵物資訊隨時可得。',
   contactPoint: {
     '@type': 'ContactPoint',
     telephone: '+886-2-1234-5678',

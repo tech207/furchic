@@ -156,7 +156,7 @@ def _build_front(
     else:
         # Text fallback
         font_brand = get_font(34, bold=True)
-        draw.text((MARGIN, MARGIN - 2), "Furchic", font=font_brand, fill=WHITE)
+        draw.text((MARGIN, MARGIN - 2), "Pet.chic Weekend", font=font_brand, fill=WHITE)
 
     # 5. Main headline
     font_title = get_font(82, bold=True)
@@ -279,7 +279,7 @@ def _build_back(qr_badge: Image.Image, domain: str) -> Image.Image:
         qr_x = logo_x + logo_w + 16
     else:
         # Text fallback
-        draw.text((logo_x, footer_y + 8), "Furchic", font=get_font(26, bold=True), fill=ORANGE)
+        draw.text((logo_x, footer_y + 8), "Pet.chic Weekend", font=get_font(26, bold=True), fill=ORANGE)
         qr_x = logo_x + 100
 
     # QR badge (small version)

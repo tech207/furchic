@@ -32,7 +32,18 @@ export async function POST(request: NextRequest) {
     password,
   })
 
-  if (error || !data.session) {
+  if (error) {
+    const msg = error.message.toLowerCase()
+    if (msg.includes('not confirmed') || msg.includes('email not confirmed')) {
+      return apiError(
+        '請先確認您的 Email，我們已發送確認信至您的信箱',
+        401,
+        'EMAIL_NOT_CONFIRMED',
+      )
+    }
+    return apiError('Email 或密碼錯誤', 401, 'INVALID_CREDENTIALS')
+  }
+  if (!data.session) {
     return apiError('Email 或密碼錯誤', 401, 'INVALID_CREDENTIALS')
   }
 

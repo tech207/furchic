@@ -20,7 +20,7 @@ import {
 // Prevent search engines from indexing preview pages
 
 export const metadata: Metadata = {
-  title: '草稿預覽 | Furchic',
+  title: '草稿預覽 | Pet.chic Weekend',
   robots: { index: false, follow: false },
 }
 

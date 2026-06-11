@@ -52,7 +52,7 @@ const MEMBER_BASES = [
 ]
 
 function isMemberPath(p: string): boolean {
-  return MEMBER_BASES.some(base => p === base || p.startsWith(base + '/'))
+  return MEMBER_BASES.some((base) => p === base || p.startsWith(base + '/'))
 }
 
 function isAdminPath(p: string): boolean {
@@ -63,6 +63,14 @@ function isAdminPath(p: string): boolean {
   )
 }
 
+function isVendorPath(p: string): boolean {
+  // /vendor/* — excluding /vendor/auth/*
+  return (
+    (p === '/vendor' || p.startsWith('/vendor/')) &&
+    !p.startsWith('/vendor/auth')
+  )
+}
+
 // ── SHA-256 hash (salted) — never store raw IPs ────────────────────────────────
 
 async function hashValue(raw: string): Promise<string> {
@@ -70,7 +78,7 @@ async function hashValue(raw: string): Promise<string> {
   const bytes = new TextEncoder().encode(raw + salt)
   const digest = await crypto.subtle.digest('SHA-256', bytes)
   return Array.from(new Uint8Array(digest))
-    .map(b => b.toString(16).padStart(2, '0'))
+    .map((b) => b.toString(16).padStart(2, '0'))
     .join('')
 }
 
@@ -131,7 +139,11 @@ export async function middleware(request: NextRequest) {
       cookies: {
         getAll: () => request.cookies.getAll(),
         setAll: (
-          toSet: Array<{ name: string; value: string; options?: CookieOptions }>,
+          toSet: Array<{
+            name: string
+            value: string
+            options?: CookieOptions
+          }>,
         ) => {
           toSet.forEach(({ name, value }) => request.cookies.set(name, value))
           response = NextResponse.next({ request })
@@ -192,7 +204,34 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // ── 3. API rate limiting ────────────────────────────────────────────────────
+  // ── 3. Vendor route protection ─────────────────────────────────────────────
+  if (isVendorPath(pathname)) {
+    if (!authUser) {
+      const url = new URL('/vendor/auth', request.url)
+      url.searchParams.set('next', pathname)
+      return NextResponse.redirect(url)
+    }
+
+    const vendorClient = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      { cookies: { getAll: () => [], setAll: () => {} } },
+    )
+    const { data: vendorRow } = await vendorClient
+      .from('vendor_accounts')
+      .select('id, is_active')
+      .eq('user_id', authUser.id)
+      .maybeSingle()
+
+    if (!vendorRow || !vendorRow.is_active) {
+      const reason = vendorRow ? 'inactive' : 'no_account'
+      const url = new URL('/vendor/auth', request.url)
+      url.searchParams.set('reason', reason)
+      return NextResponse.redirect(url)
+    }
+  }
+
+  // ── 4. API rate limiting ────────────────────────────────────────────────────
   const rl = getRLConfig(pathname)
   if (rl) {
     const rawId = rl.byIp
@@ -206,7 +245,11 @@ export async function middleware(request: NextRequest) {
         'unknown')
 
     const key = `${rl.prefix}:${await hashValue(rawId)}`
-    const { allowed, retryAfter } = await checkRateLimit(key, rl.limit, rl.window)
+    const { allowed, retryAfter } = await checkRateLimit(
+      key,
+      rl.limit,
+      rl.window,
+    )
 
     if (!allowed) {
       return NextResponse.json(
@@ -228,6 +271,7 @@ export const config = {
     '/orders/:path*',
     '/rewards',
     '/admin/:path*',
+    '/vendor/:path*',
     '/api/:path*',
   ],
 }

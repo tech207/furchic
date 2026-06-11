@@ -73,7 +73,7 @@ type Pet = {
   photo_url: string | null
   breed: string | null
   card_status: string
-  nfc_cards: NfcCard[]
+  nfc_cards: NfcCard[] | null
 }
 
 type Order = {
@@ -578,7 +578,7 @@ export default function AdminMemberDetailPage() {
         ) : (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
             {pets.map((pet) => {
-              const nfc = pet.nfc_cards[0]
+              const nfc = pet.nfc_cards?.[0]
               const hasNfc = !!nfc
               const nfcActive = nfc?.status === 'active'
               return (
